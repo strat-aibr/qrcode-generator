@@ -1,3 +1,6 @@
+import path from 'path';
+import { fileURLToPath } from 'url';
+
 import 'dotenv/config';
 import express from 'express';
 import fetch from 'node-fetch';
@@ -5,11 +8,12 @@ import fetch from 'node-fetch';
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const API_KEY = process.env.API_KEY;
+// Configuração para servir arquivos estáticos
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/', (req, res) => {
-    res.send('Servidor está funcionando! Use /fetch-qrcode/:endpoint para buscar QR codes.');
-});
+const API_KEY = process.env.API_KEY;
 
 app.get('/fetch-qrcode/:endpoint', async (req, res) => {
     const { endpoint } = req.params;
