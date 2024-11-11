@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API QR Code Viewer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f4f4f4;
+    }
+    .container {
+      text-align: center;
+    }
+    button {
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    img {
+      margin-top: 20px;
+      max-width: 100%;
+      height: auto;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <button onclick="fetchQRCode()">Gerar QR Code</button>
+  <div id="qrCodeContainer"></div>
+</div>
+
+<script>
+  async function fetchQRCode() {
+  const userInput = document.getElementById('customEndpoint').value.trim();
+
+  if (!userInput) {
+    alert('Please enter a valid endpoint');
+    return;
+  }
+
+  try {
+    const response = await fetch(`/fetch-qrcode/${userInput}`);
+
+    if (!response.ok) {
+      throw new Error(`API call failed: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log('API response:', data);
+
+    if (data && data.base64) {
+      displayQRCode(data.base64);
+    } else {
+      console.error('Unexpected API response format:', data);
+      throw new Error('Invalid API response: Base64 not found');
+    }
+  } catch (error) {
+    console.error('Error fetching QR Code:', error);
+    alert(`Failed to fetch QR Code: ${error.message}`);
+  }
+}
+
+</script>
+
+</body>
+</html>
